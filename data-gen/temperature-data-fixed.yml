@@ -8,30 +8,57 @@ ingest:
       content: |+
         {
           "temperature": ${T},
-          "timestamp": ${__TIMESTAMP},
-          "roomId": "room-1",
+          "timestamp": ${TS:-${__TIMESTAMP}},
+          "roomId": "room-13",
           "thermometerId": "dev-01"
         }
   value_sets:
-    - name: my-set
+    - name: fix
       attributes:
         - T
       values:
-        - [20.1]
-        - [21.2]
-        - [20.3]
-        - [19.1]
-        - [20.1]
-        - [19.2]
-        - [20.1]
-        - [18.1]
-        - [19.4]
-        - [20.1]
-        - [27.1]
-        - [23.1]
+        - [ 20.1 ]
+        - [ 21.2 ]
+        - [ 20.3 ]
+        - [ 19.1 ]
+        - [ 20.1 ]
+        - [ 19.2 ]
+        - [ 20.1 ]
+        - [ 18.1 ]
+        - [ 19.4 ]
+        - [ 20.1 ]
+        - [ 27.1 ]
+        - [ 23.1 ]
+    - name: timestamp
+      attributes: [ T,TS ]
+      values:
+        - [ "19.1", "1684945005" ]
+        - [ "19.2", "1684945006" ]
+        - [ "19.5", "1684945007" ]
+        - [ "19.7", "1684945008" ]
+        - [ "19.3", "1684945009" ]
+        - [ "24.1", "1684945010" ]
+        - [ "18.2", "1684945011" ]
+        - [ "19.1", "1684945012" ]
+        - [ "19.2", "1684945013" ]
+        - [ "23.4", "1684945015" ]
+    - name: fix2
+      attributes: [ T ]
+      values:
+        - [ "19.1" ]
+        - [ "19.2" ]
+        - [ "19.5" ]
+        - [ "19.7" ]
+        - [ "19.3" ]
+        - [ "24.1" ]
+        - [ "18.2" ]
+        - [ "19.1" ]
+        - [ "19.2" ]
+        - [ "23.4" ]
+      repeat: 2
   topics:
-    - name: temp.measurements
-      value_set: my-set
-      entries:
-        - value_template:
-            name: measurements.tpl
+      - name: temp.measurements
+        value_set: fix
+        entries:
+          - value_template:
+              name: measurements.tpl

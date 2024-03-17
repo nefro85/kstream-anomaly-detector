@@ -22,7 +22,7 @@ ingest:
         - ["${rand=-30..60}.${rand=0..100}", "room-02", "dev-02"]
         - ["${rand=-30..60}.${rand=0..100}", "room-03", "dev-01"]
         - ["${rand=-30..60}.${rand=0..100}", "room-03", "dev-02"]
-      repeat: 30
+      repeat: 5
 
   topics:
     - name: temp.measurements

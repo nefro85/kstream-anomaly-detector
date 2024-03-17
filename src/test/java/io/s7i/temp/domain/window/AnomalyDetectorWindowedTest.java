@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AnomalyDetectorWindowedTest {
 
@@ -61,7 +62,7 @@ class AnomalyDetectorWindowedTest {
 
     @Test
     void should_detect_anomaly() {
-        String[][] rawData = {
+        String[][] rawData = { // incorrect data ?
                 {"19.1", "1684945005"},
                 {"19.2", "1684945006"},
                 {"19.5", "1684945007"},
@@ -86,6 +87,40 @@ class AnomalyDetectorWindowedTest {
         measurements.forEach(inputTopic::pipeInput);
         var anomalies = outputTopic.readKeyValuesToList();
 
-        //assertFalse(anomalies.isEmpty());
+        assertTrue(anomalies.isEmpty());
+    }
+
+    @Test
+    void should_detect_anomaly_2() {
+        String[][] rawData = {
+                {"19.1", "1684945005"},
+                {"19.2", "1684945006"},
+                {"19.5", "1684945007"},
+                {"19.7", "1684945008"},
+                {"19.3", "1684945009"},
+                {"27.1", "1684945010"},
+                {"18.2", "1684945011"},
+                {"19.1", "1684945012"},
+                {"19.2", "1684945013"},
+                {"26.4", "1684945015"},
+                {"19.2", "1684945013"},
+                {"19.2", "1684945013"},
+                {"35.2", "1684945013"},
+                {"19.2", "1684945013"},
+        };
+
+        var measurements = Arrays.stream(rawData)
+                .map(d -> TemperatureMeasurement.builder()
+                        .temperature(Double.parseDouble(d[0]))
+                        .timestamp(System.currentTimeMillis())
+                        .roomId("room-A")
+                        .thermometerId("dev-A")
+                        .build()
+                ).toList();
+
+        measurements.forEach(inputTopic::pipeInput);
+        var anomalies = outputTopic.readKeyValuesToList();
+
+        assertFalse(anomalies.isEmpty());
     }
 }
