@@ -1,6 +1,7 @@
 package io.s7i.temp.domain.window;
 
 
+import io.s7i.temp.util.DetectorSerde;
 import io.s7i.temp.util.TemperatureMeasurementSerde;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +42,7 @@ public class AnomalyDetectorWindowed {
                 .aggregate(
                         Detector::new,
                         ((key, value, detector) -> detector.aggregate(value)),
-                        Materialized.with(Serdes.String(), Detector.DetectorSerde())
+                        Materialized.with(Serdes.String(), new DetectorSerde())
                 ).toStream()
                 .process(DetectedAnomalyProcessor::new)
                 .peek(((key, value) -> log.info("publishing anomaly: {}", value)))

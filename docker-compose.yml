@@ -21,20 +21,28 @@ services:
     environment:
       - DOER_LOG_APPENDER="CONSOLE"
 
+  kafka:
+    hostname: kafka
+    build: ./kafka
+    environment:
+      - LOGS_DIR=/data/logs
+    ports:
+      - 7000:7000
+      - 9092:9092
+    volumes:
+      - data:/data
+
   temp-anomaly:
     hostname: temp-anomaly
     build: .
     environment:
+      - APP_BROKERS=kafka:9092
       - APP_JVM_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
-      - LOGS_DIR=/data/logs
       - DEBUG=ture
+      - SPRING_PROFILES_ACTIVE=fixed
     ports:
       - 5005:5005
-      - 7000:7000
       - 8080:8080
-      - 9092:9092
-    volumes:
-      - data:/data
 
   mongo:
     image: mongo

@@ -1,14 +1,14 @@
 version: '1.0'
 kind: kafka-ingest
 kafka:
-  bootstrap.servers: temp-anomaly:9092
+  bootstrap.servers: kafka:9092
 ingest:
   templates:
     - name: measurements.tpl
       content: |+
         {
           "temperature": ${T},
-          "timestamp": 0,
+          "timestamp": ${__TIMESTAMP},
           "roomId": "room-1",
           "thermometerId": "dev-01"
         }
@@ -18,7 +18,7 @@ ingest:
         - T
       values:
         - [ "${rand=-30..60}.${rand=0..100}" ]
-      repeat: 1000
+      repeat: 10
 
   topics:
     - name: temp.measurements
