@@ -8,10 +8,7 @@ import java.util.stream.DoubleStream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TemperatureReadingsTest {
-
-    public static final double EPSILON = 0.0000000000001;
-
+public class TemperatureReadingsTest implements FloatAssert {
     @Test
     void testAnomalyDetection() {
         //given
@@ -36,7 +33,7 @@ public class TemperatureReadingsTest {
 
         assertTrue(() -> {
             var temp = anomalies.stream().findFirst().orElseThrow().temperature();
-            return anomalies.size() == 1 && Math.abs(temp - 27.1) < EPSILON;
+            return anomalies.size() == 1 && floatEquals(27.1, temp);
         });
 
     }
