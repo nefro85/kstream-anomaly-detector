@@ -14,8 +14,8 @@ services:
   gen:
     image: s7i/doer:0.1.1-release_develop
     command:
-     - /opt/doer/manifest/temperature-data01.yml
-     - /opt/doer/manifest/temperature-data02-rnd.yml
+     - /opt/doer/manifest/temperature-data-fixed.yml
+     - /opt/doer/manifest/temperature-data-rand.yml
     volumes:
       - ./data-gen:/opt/doer/manifest:ro
     environment:

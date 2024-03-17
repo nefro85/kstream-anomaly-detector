@@ -23,7 +23,7 @@ import java.util.UUID;
 public class AnomaliesPipeline {
     private final TemperatureMeasurementSerde temperatureMeasurementSerde;
     private final MongoProcessorSupplier processorSupplier;
-    @Value("${app.tempAnomalyTopic}")
+    @Value("${app.stream.tempAnomalyTopic}")
     String tempAnomalyTopic;
 
 

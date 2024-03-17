@@ -11,38 +11,33 @@ import org.apache.kafka.streams.state.KeyValueStore;
 import static java.util.Objects.requireNonNull;
 
 public class TempReadingProcessor implements Processor<String, TemperatureMeasurement, String, TemperatureMeasurement> {
-    public static final String READINGS = "readings";
     private final KryoSerde kryoSerde = new KryoSerde();
     private ProcessorContext<String, TemperatureMeasurement> context;
     private KeyValueStore<String, Bytes> readingsStore;
-
 
     @Override
     public void init(ProcessorContext<String, TemperatureMeasurement> context) {
         this.context = context;
         readingsStore = requireNonNull(context.getStateStore(AnomalyDetector.STATE_TEMP_READINGS));
-
     }
 
     @Override
     public void process(Record<String, TemperatureMeasurement> record) {
-        var tempReadings = fromStateOrNew();
+        var key = record.key();
+        var tempReadings = fromStateOrNew(key);
 
         tempReadings.putIfNotAnomaly(record.value())
                 .ifPresent(anomaly -> context.forward(record));
-
-
-        updateState(tempReadings);
-
+        updateState(key, tempReadings);
     }
 
-    private void updateState(TemperatureReadings tempReadings) {
-        readingsStore.put(READINGS, kryoSerde.from(tempReadings));
+    private void updateState(String key, TemperatureReadings tempReadings) {
+        readingsStore.put(key, kryoSerde.from(tempReadings));
     }
 
-    private TemperatureReadings fromStateOrNew() {
+    private TemperatureReadings fromStateOrNew(String key) {
         TemperatureReadings tempReadings;
-        var rawReadings = readingsStore.get(READINGS);
+        var rawReadings = readingsStore.get(key);
         if (rawReadings != null && rawReadings.get().length > 0) {
             tempReadings = kryoSerde.from(rawReadings);
         } else {
