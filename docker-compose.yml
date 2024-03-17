@@ -38,8 +38,9 @@ services:
     environment:
       - APP_BROKERS=kafka:9092
       - APP_JVM_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
-      - DEBUG=ture
-      - SPRING_PROFILES_ACTIVE=fixed
+      - DEBUG=false
+      - SPRING_PROFILES_ACTIVE=window
+      - spring_data_mongodb_uri=mongodb://anomaly-detector:pass2wd@mongo:27017/temperature-anomalies
     ports:
       - 5005:5005
       - 8080:8080
@@ -47,11 +48,12 @@ services:
   mongo:
     image: mongo
     restart: unless-stopped
-    ports:
-      - 27017:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: temperature-anomalies
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
 
   mongo-express:
     image: mongo-express

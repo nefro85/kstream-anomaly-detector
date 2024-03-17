@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/realtime/anomalies")
+@RequestMapping("realtime")
 @RequiredArgsConstructor
 @Slf4j
 public class RealtimeAnomaly {

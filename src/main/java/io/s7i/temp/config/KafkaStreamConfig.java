@@ -1,5 +1,6 @@
 package io.s7i.temp.config;
 
+import io.s7i.temp.domain.window.TempTimestampExtractor;
 import io.s7i.temp.util.TemperatureMeasurementSerde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +36,7 @@ public class KafkaStreamConfig {
         props.put(DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         props.put(DEFAULT_VALUE_SERDE_CLASS_CONFIG, TemperatureMeasurementSerde.class.getName());
         props.put(STATE_DIR_CONFIG, stateDir);
+        props.put(DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, TempTimestampExtractor.class.getName());
 
         return new KafkaStreamsConfiguration(props);
     }
