@@ -1,7 +1,9 @@
 package io.s7i.temp.domain.window;
 
+import io.s7i.temp.config.AnomalyConfig;
 import io.s7i.temp.config.StreamConfig;
 import io.s7i.temp.domain.KeyExtractor;
+import io.s7i.temp.domain.calculator.MeanCalculator;
 import io.s7i.temp.model.TemperatureMeasurement;
 import io.s7i.temp.util.TemperatureMeasurementSerde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -35,7 +37,13 @@ class AnomalyDetectorWindowedTest {
 
         var keyExtractor = new KeyExtractor(streamConfig);
 
-        var sut = new AnomalyDetectorWindowed(temSerde, streamConfig, keyExtractor); //SYSTEM UNDER TEST
+        var anomalyConfig = new AnomalyConfig();
+        anomalyConfig.setDeviationThreshold(5d);
+
+        var calc = new MeanCalculator();
+        calc.setAnomalyConfig(anomalyConfig);
+
+        var sut = new AnomalyDetectorWindowed(temSerde, streamConfig, keyExtractor, calc); //SYSTEM UNDER TEST
 
         var streamsBuilder = new StreamsBuilder();
         sut.build(streamsBuilder);

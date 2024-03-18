@@ -3,7 +3,9 @@ package io.s7i.temp.util;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import io.s7i.temp.config.AnomalyConfig;
 import io.s7i.temp.domain.TemperatureReadings;
+import io.s7i.temp.domain.calculator.MeanCalculator;
 import io.s7i.temp.domain.window.Detector;
 import io.s7i.temp.model.TemperatureMeasurement;
 import org.apache.kafka.common.utils.Bytes;
@@ -21,6 +23,8 @@ public class KryoSerde {
         kryo.register(Detector.class);
         kryo.register(ArrayList.class);
         kryo.register(TemperatureMeasurement.class);
+        kryo.register(MeanCalculator.class);
+        kryo.register(AnomalyConfig.class);
     }
 
     public TemperatureReadings from(Bytes bytes) {

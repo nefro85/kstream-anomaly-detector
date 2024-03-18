@@ -1,5 +1,7 @@
 package io.s7i.temp.domain;
 
+import io.s7i.temp.config.AnomalyConfig;
+import io.s7i.temp.domain.calculator.FixedMeanCalculator;
 import io.s7i.temp.model.TemperatureMeasurement;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +13,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TemperatureReadingsTest implements FloatAssert {
     @Test
     void testAnomalyDetection() {
+        //setup
+        var anomalyConfig = new AnomalyConfig();
+        anomalyConfig.setAvgThreshold(9);
+        anomalyConfig.setDeviationThreshold(5);
+        anomalyConfig.setMeanSize(10);
+
+        var calc = new FixedMeanCalculator(anomalyConfig);
         //given
         var measurements = DoubleStream.of(
                         20.1, 21.2, 20.3, 19.1, 20.1, 19.2, 20.1, 18.1, 19.4, 20.1, 27.1, 23.1
@@ -25,10 +34,8 @@ public class TemperatureReadingsTest implements FloatAssert {
 
         // when
         for (var m : measurements) {
-            readings.putIfNotAnomaly(m).ifPresent(anomalies::add);
-
+            calc.calcAnomaly(m, readings).whenAnomaly(anomalies::add);
         }
-
         //then
 
         assertTrue(() -> {

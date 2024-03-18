@@ -1,6 +1,8 @@
 package io.s7i.temp.domain;
 
+import io.s7i.temp.config.AnomalyConfig;
 import io.s7i.temp.config.StreamConfig;
+import io.s7i.temp.domain.calculator.FixedMeanCalculator;
 import io.s7i.temp.domain.window.TempTimestampExtractor;
 import io.s7i.temp.model.TemperatureMeasurement;
 import io.s7i.temp.util.TemperatureMeasurementSerde;
@@ -35,7 +37,14 @@ class AnomalyDetectorTest implements FloatAssert {
 
         var keyExtractor = new KeyExtractor(streamConfig);
 
-        var sut = new AnomalyDetector(temSerde, streamConfig, keyExtractor); //SYSTEM UNDER TEST
+        var anomalyConfig = new AnomalyConfig();
+        anomalyConfig.setDeviationThreshold(5d);
+        anomalyConfig.setAvgThreshold(9);
+        anomalyConfig.setMeanSize(10);
+
+        var calc = new FixedMeanCalculator(anomalyConfig);
+
+        var sut = new AnomalyDetector(temSerde, streamConfig, keyExtractor, calc); //SYSTEM UNDER TEST
 
         var streamsBuilder = new StreamsBuilder();
         sut.build(streamsBuilder);

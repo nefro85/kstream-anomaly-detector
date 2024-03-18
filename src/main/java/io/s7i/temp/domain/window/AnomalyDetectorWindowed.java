@@ -3,6 +3,7 @@ package io.s7i.temp.domain.window;
 
 import io.s7i.temp.config.StreamConfig;
 import io.s7i.temp.domain.KeyExtractor;
+import io.s7i.temp.domain.calculator.AnomalyCalculator;
 import io.s7i.temp.util.DetectorSerde;
 import io.s7i.temp.util.TemperatureMeasurementSerde;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.kstream.TimeWindows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -22,12 +24,13 @@ import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
-@Profile("window")
+@ConditionalOnProperty(value = "app.anomaly.algName", havingValue = "alg2")
 @Slf4j
 public class AnomalyDetectorWindowed {
     private final TemperatureMeasurementSerde temperatureMeasurementSerde;
     private final StreamConfig streamConfig;
     private final KeyExtractor keyExtractor;
+    private final AnomalyCalculator anomalyCalculator;
 
     @Autowired
     void build(StreamsBuilder builder) {
@@ -37,7 +40,7 @@ public class AnomalyDetectorWindowed {
                 .groupByKey()
                 .windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofSeconds(10)))
                 .aggregate(
-                        Detector::new,
+                        () -> new Detector(anomalyCalculator),
                         ((key, value, detector) -> detector.aggregate(value)),
                         Materialized.with(Serdes.String(), new DetectorSerde())
                 ).toStream()
