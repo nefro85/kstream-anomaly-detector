@@ -3,22 +3,34 @@ package io.s7i.temp.domain.calculator;
 import io.s7i.temp.config.AnomalyConfig;
 import io.s7i.temp.domain.TemperatureReadings;
 import io.s7i.temp.model.TemperatureMeasurement;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
-@Setter
+import static java.util.Objects.requireNonNull;
+
 @Component
 @Slf4j
 @ConditionalOnProperty(value = "app.anomaly.algName", havingValue = "alg2")
 public class MeanCalculator implements AnomalyCalculator, Serializable {
     private AnomalyConfig anomalyConfig;
 
+    @Autowired
+    public void setAnomalyConfig(AnomalyConfig anomalyConfig) {
+        this.anomalyConfig = anomalyConfig.toBuilder().build();//avoid generate class code for correct serialization
+    }
+
+    public AnomalyConfig getAnomalyConfig() {
+        return anomalyConfig;
+    }
+
     @Override
     public AnomalyDetection calcAnomaly(TemperatureMeasurement measurement, TemperatureReadings data) {
+        requireNonNull(anomalyConfig, "config required");
+
         var readings = data.getAggregated();
         var temp = measurement.temperature();
 
