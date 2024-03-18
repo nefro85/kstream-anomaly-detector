@@ -1,6 +1,6 @@
 # Temperature Anomaly Detector
 
-Motivation: Temperaute anomaly detection of sourced temperature measurements from Kafka's topic.\
+Motivation: Temperature anomaly detection of sourced temperature measurements from Kafka's topic.\
 Features:
  - Anomaly raporting:
    - realtime raporting endpoint
@@ -19,8 +19,8 @@ Features:
   
   Utility tool used for population data records.
 
-  For making it smoth and easy, I've used [doer](https://github.com/sygnowski/doer) tool.\
-  Doer's manifests for data ingestion process located [here](data-gen/).
+  For making, it smooths and easy, I've used [doer](https://github.com/sygnowski/doer) tool.\
+  Doer's manifest's for data ingestion process located [here](data-gen/).
 
 - Kafka Service
   
@@ -37,9 +37,9 @@ Features:
 
 ### All-in-One Docker Compose Deploymet
 
-  For a demonstration porposes there is dedicated [docker-compose.yml](docker-compose.yml) file with all neccecary configuration.
+  For a demonstration purposes, there is a dedicated [docker-compose.yml](docker-compose.yml) file with all necessary configuration.
 
-  Compose file expose to localhost following ports for services / endpoints:
+  Docker Compose will expose to localhost following ports for services / endpoints:
   | Service | Port |
   | ------- | ---- |
   | Kafdrop | [7000](http://localhost:7000) |
