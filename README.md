@@ -2,10 +2,10 @@
 
 Motivation: Temperature anomaly detection of sourced temperature measurements from Kafka's topic.\
 Features:
- - Anomaly raporting:
-   - realtime raporting endpoint
-   - data analitics endpoints
- - Anomaly detection alogorithms:
+ - Anomaly reporting:
+   - realtime reporting endpoint
+   - data analytics endpoints
+ - Anomaly detection algorithms:
    - ALG_1, sequential temperature readings
    - ALG_2, time windowed temperature readings
  - Detection scope:
@@ -35,6 +35,26 @@ Features:
   MongoDB server with Mongo Express UI.\
   Express UI creds: `admin:pass`
 
+### Configuration
+
+  Anomaly Detection specific configuration via Spring configuration, [more details](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#features.external-config). 
+  
+  ```properties
+  app.stream.tempMeasurementsTopic=temp.measurements
+  app.stream.tempAnomalyTopic=temp.anomaly
+  # anomaly scope selection [room, thermometer, both]
+  app.stream.keyType=room
+  
+  # anomaly calculation detection params 
+  app.anomaly.meanSize=10
+  app.anomaly.avgThreshold=9
+  app.anomaly.deviationThreshold=5
+  # anomaly analytics options
+  app.anomaly.mostAnomalyThreshold=10
+  # algorithm selection: alg1 - sequential, alg2 - 10 sec window
+  app.anomaly.algName=alg1
+  ```
+
 ### All-in-One Docker Compose Deploymet
 
   For a demonstration purposes, there is a dedicated [docker-compose.yml](docker-compose.yml) file with all necessary configuration.
@@ -52,8 +72,13 @@ Features:
   # first execution steps
   # Kafka Broker
   docker compose up -d kafka
-  # wait a while for initilization 
-  # then, run othere components too
+  # wait a while for initialization
+  sleep 6 
+  # then, run other components too
   docker compose up -d
 
+  ```
+  ```bash
+  # cleanup
+  docker compose down -v
   ```

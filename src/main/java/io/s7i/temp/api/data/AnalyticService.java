@@ -1,6 +1,8 @@
 package io.s7i.temp.api.data;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -17,12 +19,14 @@ public class AnalyticService {
     }
 
     private final MongoTemplate template;
+    @Value("${app.anomaly.mostAnomalyThreshold}")
     private long threshold;
 
     List<ThermometerAggregation> mostAnomalyDetectedThermometer() {
         var aggr = Aggregation.newAggregation(
                 Aggregation.group("thermometerId").count().as("count"),
                 Aggregation.match(Criteria.where("count").gt(threshold)),
+                Aggregation.sort(Sort.Direction.DESC, "count"),
                 Aggregation.project("count").and("thermometerId").previousOperation()
         );
 

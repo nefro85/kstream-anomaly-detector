@@ -1,5 +1,6 @@
 package io.s7i.temp.api.data;
 
+import io.s7i.temp.domain.event.AnomalyEventPublisher;
 import io.s7i.temp.model.TemperatureMeasurement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ public class MongoProcessor implements Processor<String, TemperatureMeasurement,
     ProcessorContext<String, TemperatureMeasurement> context;
 
     private final CrudRepository crudRepository;
+    private final AnomalyEventPublisher publisher;
 
     @Override
     public void init(ProcessorContext<String, TemperatureMeasurement> context) {
@@ -31,6 +33,8 @@ public class MongoProcessor implements Processor<String, TemperatureMeasurement,
 
         var anomaly = new Anomaly(null, temp, ts, roomId, thermometer);
         crudRepository.insert(anomaly);
+        publisher.publishAnomaly(measurement);
+
         context.forward(record);
     }
 }

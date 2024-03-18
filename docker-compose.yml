@@ -11,15 +11,13 @@ volumes:
 
 
 services:
-  gen:
-    image: s7i/doer:0.1.1-release_develop
+  gen: # https://github.com/sygnowski/doer/pkgs/container/doer/192577213?tag=0.1.1
+    image: ghcr.io/sygnowski/doer:0.1.1
     command:
-     - /opt/doer/manifest/temperature-data-fixed.yml
+     #- /opt/doer/manifest/temperature-data-fixed.yml
      - /opt/doer/manifest/temperature-data-rand.yml
     volumes:
       - ./data-gen:/opt/doer/manifest:ro
-    environment:
-      - DOER_LOG_APPENDER="CONSOLE"
 
   kafka:
     hostname: kafka
@@ -32,14 +30,14 @@ services:
     volumes:
       - data:/data
 
-  temp-anomaly:
+  anomaly-detector:
     hostname: temp-anomaly
     build: .
     environment:
       - APP_BROKERS=kafka:9092
       - APP_JVM_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
       - DEBUG=false
-      - SPRING_PROFILES_ACTIVE=window
+      - app_anomaly_algName=alg2
       - spring_data_mongodb_uri=mongodb://anomaly-detector:pass2wd@mongo:27017/temperature-anomalies
     ports:
       - 5005:5005
