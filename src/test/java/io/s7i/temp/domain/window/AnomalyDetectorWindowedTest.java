@@ -12,6 +12,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -34,6 +35,7 @@ class AnomalyDetectorWindowedTest {
         streamConfig.setKeyType("room");
         streamConfig.setTempMeasurementsTopic("temp");
         streamConfig.setTempAnomalyTopic("anomaly");
+        streamConfig.setWindowSize(Duration.parse("PT10S"));
 
         var keyExtractor = new KeyExtractor(streamConfig);
 

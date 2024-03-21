@@ -17,8 +17,10 @@ public class DetectedAnomalyProcessor implements Processor<Windowed<String>, Det
 
     @Override
     public void process(Record<Windowed<String>, Detector> record) {
+        var key = record.key();
+        var windowKey = key.key() + "-" + key.window().startTime() + "-" + key.window().endTime();
         for (var anomaly : record.value().getAnomalies()) {
-            context.forward(new Record<>(null, anomaly, System.currentTimeMillis()));
+            context.forward(new Record<>(windowKey, anomaly, System.currentTimeMillis()));
         }
     }
 }

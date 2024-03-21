@@ -1,18 +1,35 @@
-# Temperature Anomaly Detector
+# Anomaly Detector
+Spring Boot based application with Kafka Stream Topology, used to emit and store 'temperature anomaly' readings
+based on keyed processing.
 
-Motivation: Temperature anomaly detection of sourced temperature measurements from Kafka's topic.\
-Features:
- - Anomaly reporting:
-   - realtime reporting endpoint
-   - data analytics endpoints
+Key aspects of application:
+  - Usage of KTable with persisted state.
+  - Time-Window based aggregation with state.
+
+Motivation: hand zone experience with KStream processing.
+
+### Key Features:
+ - Anomaly reporting into MongoDB:
+   - Realtime reporting endpoint.
+   - Data analytics endpoints.
  - Anomaly detection algorithms:
-   - ALG_1, sequential temperature readings
-   - ALG_2, time windowed temperature readings
+   - ALG_1, sequential temperature readings.
+   - ALG_2, time windowed temperature readings.
  - Detection scope:
    - Global
    - Room
    - Device / Thermometer
    - Room and Device
+
+### Canonical data model
+```json
+{
+  "temperature": 23.4,
+  "timestamp": 1711043278357,
+  "roomId": "office",
+  "thermometerId": "wall-device"
+}
+```
 
 ### Component Stack Description
 - Data Generator
@@ -75,7 +92,7 @@ Features:
   # wait a while for initialization
   sleep 6 
   # then, run other components too
-  docker compose up -d
+  docker compose up -d --build
 
   ```
   ```bash

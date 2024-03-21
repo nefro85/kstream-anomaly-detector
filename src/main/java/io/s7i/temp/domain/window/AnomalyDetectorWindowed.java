@@ -16,10 +16,8 @@ import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.kstream.TimeWindows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
 import java.util.Objects;
 
 @Component
@@ -34,14 +32,17 @@ public class AnomalyDetectorWindowed {
 
     @Autowired
     void build(StreamsBuilder builder) {
+        var windowSize = streamConfig.getWindowSize();
+        log.info("building stream with window size: {}", windowSize);
+
         var stream = builder.stream(streamConfig.getTempMeasurementsTopic(), Consumed.with(Serdes.String(), temperatureMeasurementSerde));
         stream.filter((k, v) -> Objects.nonNull(v))
                 .map(keyExtractor::mapKeyValue)
                 .groupByKey()
-                .windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofSeconds(10)))
+                .windowedBy(TimeWindows.ofSizeWithNoGrace(windowSize))
                 .aggregate(
                         () -> new Detector(anomalyCalculator),
-                        ((key, value, detector) -> detector.aggregate(value)),
+                        (key, value, detector) -> detector.aggregate(value),
                         Materialized.with(Serdes.String(), new DetectorSerde())
                 ).toStream()
                 .process(DetectedAnomalyProcessor::new)
