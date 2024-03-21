@@ -6,7 +6,7 @@ Key aspects of application:
   - Usage of KTable with persisted state.
   - Time-Window based aggregation with state.
 
-Motivation: hand zone experience with KStream processing.
+Motivation: Hands-on experience with KStream processing.
 
 ### Key Features:
  - Anomaly reporting into MongoDB:
