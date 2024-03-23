@@ -20,9 +20,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
+import static io.s7i.temp.TempApplication.ALG_CFG;
+import static io.s7i.temp.TempApplication.ALG_NAME_B;
+
 @Component
 @RequiredArgsConstructor
-@ConditionalOnProperty(value = "app.anomaly.algName", havingValue = "alg2")
+@ConditionalOnProperty(value = ALG_CFG, havingValue = ALG_NAME_B)
 @Slf4j
 public class AnomalyDetectorWindowed {
     private final TemperatureMeasurementSerde temperatureMeasurementSerde;

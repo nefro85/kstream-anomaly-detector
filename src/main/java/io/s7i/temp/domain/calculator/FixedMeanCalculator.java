@@ -8,10 +8,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
+import static io.s7i.temp.TempApplication.ALG_CFG;
+import static io.s7i.temp.TempApplication.ALG_NAME_A;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
-@ConditionalOnProperty(value = "app.anomaly.algName", havingValue = "alg1")
+@ConditionalOnProperty(value = ALG_CFG, havingValue = ALG_NAME_A)
 public class FixedMeanCalculator implements AnomalyCalculator {
     private final AnomalyConfig anomalyConfig;
 
@@ -36,7 +39,7 @@ public class FixedMeanCalculator implements AnomalyCalculator {
                 return new AnomalyDetection(measurement);
             } else {
                 readings.push(temp);
-                if (readings.size() >= anomalyConfig.getMeanSize()) {
+                if (readings.size() > anomalyConfig.getMeanSize()) {
                     readings.pollFirst();
                 }
             }

@@ -8,7 +8,6 @@ import io.s7i.temp.domain.TemperatureReadings;
 import io.s7i.temp.domain.calculator.MeanCalculator;
 import io.s7i.temp.domain.window.Detector;
 import io.s7i.temp.model.TemperatureMeasurement;
-import org.apache.kafka.common.utils.Bytes;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -27,20 +26,20 @@ public class KryoSerde {
         kryo.register(AnomalyConfig.class);
     }
 
-    public TemperatureReadings from(Bytes bytes) {
-        return kryo.readObject(new Input(bytes.get()), TemperatureReadings.class);
-    }
-
     public Detector readDetector(byte[] bytes) {
-        return kryo.readObject(new Input(bytes), Detector.class);
+        return readObject(Detector.class, bytes);
     }
 
     public byte[] writeDetector(Detector detector) {
         return writeObject(detector);
     }
 
-    public Bytes from(TemperatureReadings readings) {
-        return new Bytes(writeObject(readings));
+    public byte[] writeReadings(TemperatureReadings data) {
+        return writeObject(data);
+    }
+
+    public TemperatureReadings readReadings(byte[] bytes) {
+        return readObject(TemperatureReadings.class, bytes);
     }
 
     private byte[] writeObject(Object readings) {
@@ -49,5 +48,9 @@ public class KryoSerde {
         kryo.writeObject(output, readings);
         output.flush();
         return baos.toByteArray();
+    }
+
+    private <T> T readObject(Class<T> type, byte[] data) {
+        return kryo.readObject(new Input(data), type);
     }
 }

@@ -3,6 +3,7 @@ Spring Boot based application with Kafka Stream Topology, used to emit and store
 based on keyed processing.
 
 Key aspects of application:
+  - Stateful processing
   - Usage of KTable with persisted state.
   - Time-Window based aggregation with state.
 
@@ -98,4 +99,8 @@ Motivation: Hands-on experience with KStream processing.
   ```bash
   # cleanup
   docker compose down -v
+  ```
+  ```bash
+  ./gradlew build
+  docker compose up -d --build anomaly-detector 
   ```

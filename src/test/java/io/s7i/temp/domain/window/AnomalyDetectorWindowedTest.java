@@ -122,7 +122,7 @@ class AnomalyDetectorWindowedTest {
         var measurements = Arrays.stream(rawData)
                 .map(d -> TemperatureMeasurement.builder()
                         .temperature(Double.parseDouble(d[0]))
-                        .timestamp(System.currentTimeMillis())
+                        .timestamp(Long.parseLong(d[1]))
                         .roomId("room-A")
                         .thermometerId("dev-A")
                         .build()

@@ -13,20 +13,24 @@ ingest:
           "thermometerId": "${D}"
         }
   value_sets:
-    - name: my-set
+    - name: soft
       attributes: [T, R, D]
       values:
-        - ["${rand=-30..60}.${rand=0..100}", "room-01", "dev-01"]
-        - ["${rand=-30..60}.${rand=0..100}", "room-01", "dev-02"]
-        - ["${rand=-30..60}.${rand=0..100}", "room-02", "dev-01"]
-        - ["${rand=-30..60}.${rand=0..100}", "room-02", "dev-02"]
-        - ["${rand=-30..60}.${rand=0..100}", "room-03", "dev-01"]
-        - ["${rand=-30..60}.${rand=0..100}", "room-03", "dev-02"]
-      repeat: 50
-
+        - ["${rand=15..25}.${rand=0..100}", "room-${rand=1..7}", "dev-${rand=0..10}"]
+      repeat: 300
+    - name: hard
+      attributes: [T, R, D]
+      values:
+        - ["${rand=-30..60}.${rand=0..100}", "room-${rand=1..7}", "dev-${rand=0..10}"]
+      repeat: 2000
   topics:
     - name: temp.measurements
-      value_set: my-set
+      value_set: soft
+      entries:
+        - value_template:
+            name: measurements.tpl
+    - name: temp.measurements
+      value_set: hard
       entries:
         - value_template:
             name: measurements.tpl

@@ -4,6 +4,7 @@ import io.s7i.temp.config.StreamConfig;
 import io.s7i.temp.domain.calculator.AnomalyCalculator;
 import io.s7i.temp.model.TemperatureMeasurement;
 import io.s7i.temp.util.TemperatureMeasurementSerde;
+import io.s7i.temp.util.TemperatureReadingsSerde;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serdes;
@@ -21,12 +22,16 @@ import org.springframework.stereotype.Component;
 import java.util.Objects;
 import java.util.Set;
 
+import static io.s7i.temp.TempApplication.ALG_CFG;
+import static io.s7i.temp.TempApplication.ALG_NAME_A;
+
 @Component
 @Slf4j
 @RequiredArgsConstructor
-@ConditionalOnProperty(value = "app.anomaly.algName", havingValue = "alg1")
+@ConditionalOnProperty(value = ALG_CFG, havingValue = ALG_NAME_A)
 public class AnomalyDetector {
     public static final String STATE_TEMP_READINGS = "temp-readings";
+
     private final TemperatureMeasurementSerde temperatureMeasurementSerde;
     private final StreamConfig streamConfig;
     private final KeyExtractor keyExtractor;
@@ -52,7 +57,7 @@ public class AnomalyDetector {
             public Set<StoreBuilder<?>> stores() {
                 var tempReading = Stores.keyValueStoreBuilder(
                         Stores.persistentKeyValueStore(STATE_TEMP_READINGS),
-                        Serdes.String(), Serdes.Bytes()
+                        Serdes.String(), new TemperatureReadingsSerde()
                 );
                 return Set.of(tempReading);
             }

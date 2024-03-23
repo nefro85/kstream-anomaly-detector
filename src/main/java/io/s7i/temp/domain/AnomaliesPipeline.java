@@ -21,6 +21,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class AnomaliesPipeline {
+    public static final String STORE_ANOMALIES = "anomalies";
     private final TemperatureMeasurementSerde temperatureMeasurementSerde;
     private final MongoProcessorSupplier processorSupplier;
     @Value("${app.stream.tempAnomalyTopic}")
@@ -30,10 +31,13 @@ public class AnomaliesPipeline {
     @Autowired
     void build(StreamsBuilder builder) {
         var table = builder.stream(tempAnomalyTopic, Consumed.with(Serdes.String(), temperatureMeasurementSerde))
-                .map((key, value) -> KeyValue.pair(UUID.randomUUID().toString(), value))
+                .map((key, value) -> KeyValue.pair(
+                        key + "-" + UUID.randomUUID(),
+                        value
+                ))
                 .peek(((key, value) -> log.info("reading-anomaly: {}", value)))
                 .process(processorSupplier)
-                .toTable(Named.as("anomalies"), Materialized.as("anomalies"));
+                .toTable(Named.as("anomalies"), Materialized.as(STORE_ANOMALIES));
 
         log.info("queryable name: {}", table.queryableStoreName());
     }
