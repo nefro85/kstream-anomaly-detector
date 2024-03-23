@@ -3,9 +3,10 @@ Spring Boot based application with Kafka Stream Topology, used to emit and store
 based on keyed processing.
 
 Key aspects of application:
-  - Stateful processing
+  - Stateful processing.
   - Usage of KTable with persisted state.
   - Time-Window based aggregation with state.
+  - Real-time data visibility via REST API.
 
 Motivation: Hands-on experience with KStream processing.
 
@@ -62,6 +63,7 @@ Motivation: Hands-on experience with KStream processing.
   app.stream.tempAnomalyTopic=temp.anomaly
   # anomaly scope selection [room, thermometer, both]
   app.stream.keyType=room
+  app.stream.windowSize=PT30S # alg2, time window size.
   
   # anomaly calculation detection params 
   app.anomaly.meanSize=10
@@ -69,10 +71,44 @@ Motivation: Hands-on experience with KStream processing.
   app.anomaly.deviationThreshold=5
   # anomaly analytics options
   app.anomaly.mostAnomalyThreshold=10
-  # algorithm selection: alg1 - sequential, alg2 - 10 sec window
+  # algorithm selection: alg1 - sequential, alg2 - 30 sec window
   app.anomaly.algName=alg1
   ```
-
+### Real-Time API
+  * Current readings: `curl -X 'GET' 'http://localhost:8080/realtime/readings'`
+    ```json
+    [
+      {
+        "index": "room-1",
+        "detail": {
+          "avg": 21.743000000000002,
+          "data": [
+            21.64,
+            22.11,
+            22.8,
+            20.65,
+            21.9,
+            21.54,
+            21.62,
+            21.66,
+            23.11,
+            20.4
+          ]
+        }
+      }
+    ]
+    ```
+  * Anomalies: `curl -X 'GET' 'http://localhost:8080/realtime/anomalies'`
+    ```json
+    [
+      {
+        "temperature": 5.13,
+        "timestamp": 1711203666227,
+        "roomId": "room-1",
+        "thermometerId": "dev-4"
+      }
+    ]
+    ```
 ### All-in-One Docker Compose Deploymet
 
   For a demonstration purposes, there is a dedicated [docker-compose.yml](docker-compose.yml) file with all necessary configuration.
