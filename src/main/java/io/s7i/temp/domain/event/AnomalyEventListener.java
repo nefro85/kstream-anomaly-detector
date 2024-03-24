@@ -1,29 +1,28 @@
 package io.s7i.temp.domain.event;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Sinks;
 
 @Component
 @Slf4j
-public class AnomalyEventListener implements ApplicationListener<AnomalyEvent>, Publisher<AnomalyEvent> {
-
-    private Subscriber<? super AnomalyEvent> subscriber;
+@RequiredArgsConstructor
+public class AnomalyEventListener implements ApplicationListener<AnomalyEvent> {
+    private final Sinks.Many<AnomalyEvent> sink;
 
     @Override
     public void onApplicationEvent(AnomalyEvent event) {
-        if (subscriber != null) {
-            subscriber.onNext(event);
-        } else {
-            log.warn("event received but there was no subscriber");
+        var result = sink.tryEmitNext(event);
+
+        if (result.isFailure()) {
+            log.warn("event emit failure");
         }
     }
 
-    @Override
-    public void subscribe(Subscriber<? super AnomalyEvent> sub) {
-        subscriber = sub;
-        log.info("new subscribe: {}", sub);
+    public Flux<AnomalyEvent> asFlux() {
+        return sink.asFlux();
     }
 }

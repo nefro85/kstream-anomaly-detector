@@ -10,11 +10,13 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 
+import static io.s7i.temp.TempApplication.ALG_CFG;
+import static io.s7i.temp.TempApplication.ALG_NAME_B;
 import static java.util.Objects.requireNonNull;
 
 @Component
 @Slf4j
-@ConditionalOnProperty(value = "app.anomaly.algName", havingValue = "alg2")
+@ConditionalOnProperty(value = ALG_CFG, havingValue =  ALG_NAME_B)
 public class MeanCalculator implements AnomalyCalculator, Serializable {
     private AnomalyConfig anomalyConfig;
 
